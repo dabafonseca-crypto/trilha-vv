@@ -1,0 +1,1818 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101c2b">
+<title>TRILHA VV | Desenvolvimento de Pessoas</title>
+
+<style>
+:root {
+  --navy: #101c2b;
+  --navy2: #17283b;
+  --green: #18a879;
+  --green-light: #e7f7f0;
+  --bg: #f4f7fa;
+  --white: #ffffff;
+  --text: #263548;
+  --muted: #788797;
+  --border: #e6ebf0;
+  --orange: #e9a23b;
+  --red: #d9534f;
+  --radius: 15px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Inter, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+}
+
+.sidebar {
+  width: 245px;
+  background: var(--navy);
+  color: white;
+  padding: 25px 16px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 8px 35px;
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--green);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.brand strong {
+  font-size: 17px;
+  letter-spacing: 1px;
+}
+
+.brand small {
+  display: block;
+  color: #aab8c6;
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+.nav-label {
+  color: #8294a7;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 0 12px;
+  margin: 12px 0;
+}
+
+.nav-btn {
+  border: 0;
+  color: #bdc9d5;
+  background: transparent;
+  padding: 13px 12px;
+  border-radius: 10px;
+  text-align: left;
+  margin-bottom: 5px;
+  font-size: 13px;
+  transition: .2s;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+  background: #263c50;
+  color: white;
+}
+
+.nav-btn.active {
+  border-left: 3px solid var(--green);
+}
+
+.side-footer {
+  margin-top: auto;
+  padding: 15px 10px;
+  color: #9eacb9;
+  font-size: 11px;
+  line-height: 1.7;
+  border-top: 1px solid #2a3b4c;
+}
+
+.workspace {
+  flex: 1;
+  min-width: 0;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 20px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.eyebrow {
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.topbar h1 {
+  font-size: 23px;
+  margin-top: 5px;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.top-actions select {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  max-width: 190px;
+  background: white;
+  color: var(--text);
+}
+
+.avatar {
+  background: var(--green-light);
+  color: var(--green);
+  width: 39px;
+  height: 39px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+
+main {
+  max-width: 1350px;
+  padding: 30px;
+  margin: auto;
+}
+
+.welcome {
+  background: linear-gradient(115deg, #122438, #24435a);
+  color: white;
+  padding: 30px;
+  border-radius: var(--radius);
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.welcome h2 {
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+.welcome p {
+  color: #c2d0dc;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.welcome-mark {
+  font-size: 58px;
+  opacity: .8;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 18px;
+}
+
+.stat-card {
+  padding: 19px;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stat-number {
+  font-size: 29px;
+  font-weight: 800;
+  margin: 12px 0 5px;
+}
+
+.stat-description {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 25px 0 15px;
+}
+
+.section-title h2 {
+  font-size: 17px;
+}
+
+.section-title p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: #edf1f4;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 20px;
+}
+
+.employee-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.employee-row:last-child {
+  border-bottom: 0;
+}
+
+.employee-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #eaf0f6;
+  color: #42617e;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+
+.employee-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.employee-info strong {
+  display: block;
+  font-size: 13px;
+}
+
+.employee-info small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.employee-progress {
+  width: 110px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.module-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.module-icon {
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--green-light);
+  font-size: 21px;
+  margin-bottom: 15px;
+}
+
+.module-card h3 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.module-card p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  min-height: 40px;
+}
+
+.module-meta {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.tag {
+  display: inline-block;
+  background: var(--green-light);
+  color: #16835f;
+  border-radius: 30px;
+  padding: 5px 9px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.tag.pending {
+  background: #fff3df;
+  color: #ad7622;
+}
+
+.btn {
+  border: 0;
+  border-radius: 9px;
+  padding: 11px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--green);
+  color: white;
+}
+
+.btn:hover {
+  filter: brightness(.95);
+}
+
+.btn-secondary {
+  background: #edf2f6;
+  color: var(--text);
+}
+
+.btn-danger {
+  background: #fff0ef;
+  color: var(--red);
+}
+
+.btn-small {
+  padding: 8px 12px;
+  font-size: 11px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 12px;
+  outline: none;
+  background: white;
+  color: var(--text);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--green);
+}
+
+.field textarea {
+  min-height: 105px;
+  resize: vertical;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+th, td {
+  text-align: left;
+  padding: 14px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+th {
+  color: var(--muted);
+  font-weight: 700;
+  background: #fafbfd;
+}
+
+.empty {
+  text-align: center;
+  padding: 35px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.note {
+  border-left: 3px solid var(--green);
+  padding: 12px 15px;
+  background: #f8fafb;
+  border-radius: 0 9px 9px 0;
+  margin-bottom: 12px;
+}
+
+.note strong {
+  font-size: 12px;
+}
+
+.note small {
+  color: var(--muted);
+  display: block;
+  font-size: 10px;
+  margin: 5px 0;
+}
+
+.note p {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(8, 19, 30, .7);
+  display: grid;
+  place-items: center;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.modal {
+  background: white;
+  width: min(650px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 18px;
+  padding: 25px;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.modal-head h2 {
+  font-size: 20px;
+}
+
+.close-btn {
+  background: #edf1f4;
+  border: 0;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+}
+
+.lesson-content {
+  background: #f7f9fb;
+  padding: 17px;
+  border-radius: 10px;
+  margin: 15px 0;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.lesson-content ul {
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.question {
+  border-top: 1px solid var(--border);
+  padding: 17px 0;
+}
+
+.question strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.option {
+  display: flex;
+  gap: 9px;
+  font-size: 12px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.quiz-result {
+  margin-top: 15px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+footer {
+  padding: 20px 30px;
+  color: var(--muted);
+  font-size: 10px;
+  text-align: center;
+}
+
+@media(max-width: 900px) {
+  .sidebar {
+    width: 190px;
+  }
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(max-width: 650px) {
+  .app {
+    display: block;
+  }
+  .sidebar {
+    width: 100%;
+    padding: 12px;
+  }
+  .brand {
+    padding: 5px 8px 12px;
+  }
+  .nav-label, .side-footer {
+    display: none;
+  }
+  .sidebar nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 5px;
+  }
+  .nav-btn {
+    white-space: nowrap;
+    padding: 10px;
+    font-size: 11px;
+  }
+  .topbar {
+    padding: 16px;
+    align-items: flex-start;
+  }
+  .topbar h1 {
+    font-size: 18px;
+  }
+  .top-actions select {
+    max-width: 125px;
+    font-size: 10px;
+  }
+  main {
+    padding: 16px;
+  }
+  .welcome {
+    padding: 22px;
+  }
+  .welcome h2 {
+    font-size: 20px;
+  }
+  .welcome-mark {
+    display: none;
+  }
+  .stats {
+    gap: 10px;
+  }
+  .stat-card {
+    padding: 14px;
+  }
+  .stat-number {
+    font-size: 24px;
+  }
+  .grid-2, .module-grid, .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">VV</div>
+      <div>
+        <strong>TRILHA VV</strong>
+        <small>DESENVOLVIMENTO DE PESSOAS</small>
+      </div>
+    </div>
+
+    <div class="nav-label">Menu principal</div>
+
+    <nav>
+      <button class="nav-btn active" data-page="dashboard">▦ Dashboard</button>
+      <button class="nav-btn" data-page="trilhas">▤ Trilhas de aprendizagem</button>
+      <button class="nav-btn" data-page="colaboradores">♙ Colaboradores</button>
+      <button class="nav-btn" data-page="acompanhamento">✓ Acompanhamento</button>
+      <button class="nav-btn" data-page="relatorios">▥ Relatórios</button>
+    </nav>
+
+    <div class="side-footer">
+      TRILHA VV<br>
+      Capacitar. Acompanhar. Desenvolver.<br>
+      Versão demonstrativa 1.0
+    </div>
+  </aside>
+
+  <section class="workspace">
+
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">GESTÃO DE APRENDIZAGEM</div>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+
+      <div class="top-actions">
+        <select id="employeePicker" aria-label="Selecionar colaborador">
+        </select>
+        <div class="avatar">VV</div>
+      </div>
+    </header>
+
+    <main id="view"></main>
+
+    <footer>
+      TRILHA VV — Plataforma demonstrativa de onboarding e capacitação profissional.
+    </footer>
+
+  </section>
+</div>
+
+<div id="modalRoot"></div>
+
+<script>
+// ======================================
+// 1. DADOS DOS TREINAMENTOS
+// ======================================
+
+const MODULES = [
+  {
+    id: 1,
+    title: "Boas-vindas e cultura VV",
+    role: "Todos os cargos",
+    duration: "15 minutos",
+    icon: "🏢",
+    description: "Conheça a organização, sua cultura, seus valores e as expectativas profissionais.",
+    topics: [
+      "História e cultura da organização.",
+      "Missão, visão e valores.",
+      "Conduta e relacionamento profissional.",
+      "Responsabilidades do colaborador.",
+      "Organização e comunicação interna."
+    ],
+    quiz: [
+      {
+        question: "Qual é o objetivo da integração de um novo colaborador?",
+        options: [
+          "Apenas apresentar o espaço físico.",
+          "Facilitar a adaptação e apresentar a cultura e as responsabilidades.",
+          "Substituir o acompanhamento do gestor."
+        ],
+        answer: 1
+      },
+      {
+        question: "O que deve orientar a conduta profissional?",
+        options: [
+          "Respeito, responsabilidade e colaboração.",
+          "Somente a produtividade individual.",
+          "A preferência pessoal de cada funcionário."
+        ],
+        answer: 0
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: "Boas práticas e segurança alimentar",
+    role: "Auxiliar de cozinha",
+    duration: "25 minutos",
+    icon: "🥗",
+    description: "Aprenda procedimentos básicos de higiene, manipulação e conservação de alimentos.",
+    topics: [
+      "Higienização correta das mãos.",
+      "Limpeza de utensílios e superfícies.",
+      "Prevenção de contaminação cruzada.",
+      "Armazenamento e conservação.",
+      "Uso correto dos equipamentos de proteção."
+    ],
+    quiz: [
+      {
+        question: "Quando as mãos devem ser higienizadas?",
+        options: [
+          "Somente no início do expediente.",
+          "Antes e depois de atividades que possam contaminá-las.",
+          "Somente após o uso de produtos químicos."
+        ],
+        answer: 1
+      },
+      {
+        question: "O que é contaminação cruzada?",
+        options: [
+          "Transferência de contaminantes entre alimentos, superfícies ou utensílios.",
+          "Organização do estoque.",
+          "Processo de resfriamento dos alimentos."
+        ],
+        answer: 0
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: "Preparo e organização da cozinha",
+    role: "Auxiliar de cozinha",
+    duration: "30 minutos",
+    icon: "👨‍🍳",
+    description: "Desenvolva competências de organização, preparação e apoio às rotinas da cozinha.",
+    topics: [
+      "Organização da estação de trabalho.",
+      "Separação e identificação de ingredientes.",
+      "Uso seguro de utensílios.",
+      "Cumprimento das orientações do chef.",
+      "Organização e limpeza após as atividades."
+    ],
+    quiz: [
+      {
+        question: "Como deve ser organizada a estação de trabalho?",
+        options: [
+          "Com materiais espalhados para facilitar o acesso.",
+          "De forma limpa, organizada e segura.",
+          "Somente ao final do expediente."
+        ],
+        answer: 1
+      },
+      {
+        question: "Qual é a atitude adequada diante de uma dúvida sobre o preparo?",
+        options: [
+          "Improvisar sem comunicar ninguém.",
+          "Ignorar a orientação.",
+          "Consultar o responsável pela atividade."
+        ],
+        answer: 2
+      }
+    ]
+  },
+  {
+    id: 4,
+    title: "Atendimento e experiência do cliente",
+    role: "Atendente",
+    duration: "25 minutos",
+    icon: "🤝",
+    description: "Aprenda técnicas de atendimento, comunicação e resolução de situações com clientes.",
+    topics: [
+      "Abordagem cordial.",
+      "Escuta ativa.",
+      "Comunicação clara.",
+      "Conhecimento do cardápio.",
+      "Encaminhamento de reclamações."
+    ],
+    quiz: [
+      {
+        question: "Qual comportamento demonstra um bom atendimento?",
+        options: [
+          "Interromper o cliente.",
+          "Ouvir com atenção e responder com cordialidade.",
+          "Evitar esclarecer dúvidas."
+        ],
+        answer: 1
+      },
+      {
+        question: "Como agir diante de uma reclamação?",
+        options: [
+          "Ouvir, manter a cordialidade e buscar uma solução.",
+          "Discutir com o cliente.",
+          "Ignorar a situação."
+        ],
+        answer: 0
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: "Operação de caixa",
+    role: "Caixa",
+    duration: "20 minutos",
+    icon: "💳",
+    description: "Conheça os procedimentos de operação, conferência e atendimento no caixa.",
+    topics: [
+      "Abertura e conferência do caixa.",
+      "Registro correto de pedidos.",
+      "Meios de pagamento.",
+      "Conferência de valores.",
+      "Fechamento e comunicação de divergências."
+    ],
+    quiz: [
+      {
+        question: "O que fazer ao identificar uma divergência no caixa?",
+        options: [
+          "Corrigir sem registrar.",
+          "Ignorar a diferença.",
+          "Comunicar o responsável e seguir o procedimento interno."
+        ],
+        answer: 2
+      },
+      {
+        question: "Qual é uma prática essencial na operação de caixa?",
+        options: [
+          "Conferir os valores e registrar corretamente as operações.",
+          "Não conferir os pagamentos.",
+          "Deixar o caixa aberto sem acompanhamento."
+        ],
+        answer: 0
+      }
+    ]
+  },
+  {
+    id: 6,
+    title: "Liderança e acompanhamento",
+    role: "Gerente de unidade",
+    duration: "30 minutos",
+    icon: "📊",
+    description: "Desenvolva habilidades de liderança, feedback e acompanhamento de equipes.",
+    topics: [
+      "Acompanhamento de novos colaboradores.",
+      "Comunicação e feedback.",
+      "Identificação de necessidades de treinamento.",
+      "Gestão de desempenho.",
+      "Desenvolvimento da equipe."
+    ],
+    quiz: [
+      {
+        question: "Qual é o papel do gestor no onboarding?",
+        options: [
+          "Apenas conferir a presença.",
+          "Orientar, acompanhar e oferecer feedback.",
+          "Delegar toda a responsabilidade ao novo colaborador."
+        ],
+        answer: 1
+      },
+      {
+        question: "Qual é a finalidade do feedback?",
+        options: [
+          "Identificar oportunidades de melhoria e reconhecer avanços.",
+          "Punir todos os erros.",
+          "Substituir os treinamentos."
+        ],
+        answer: 0
+      }
+    ]
+  }
+];
+
+// ======================================
+// 2. DADOS INICIAIS DE DEMONSTRAÇÃO
+// ======================================
+
+const STORAGE_KEY = "trilha_vv_dados_v1";
+
+const initialData = {
+  employees: [
+    {
+      id: 1,
+      name: "Ana Souza",
+      role: "Auxiliar de cozinha",
+      unit: "Manaus - Centro",
+      start: "2026-11-10",
+      mentor: "Chef Marcos",
+      completedModules: [1],
+      notes: []
+    },
+    {
+      id: 2,
+      name: "Carlos Lima",
+      role: "Atendente",
+      unit: "Belém - Centro",
+      start: "2026-11-15",
+      mentor: "Mariana",
+      completedModules: [],
+      notes: []
+    }
+  ]
+};
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed.employees)) {
+        return parsed;
+      }
+    }
+  } catch (error) {
+    console.error("Erro ao carregar dados:", error);
+  }
+  return JSON.parse(JSON.stringify(initialData));
+}
+
+let db = loadData();
+let activeEmployeeId = db.employees[0]?.id ?? null;
+let activePage = "dashboard";
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+}
+
+function getEmployee(id = activeEmployeeId) {
+  return db.employees.find(e => String(e.id) === String(id));
+}
+
+function getEligibleModules(employee) {
+  if (!employee) return [];
+  return MODULES.filter(m =>
+    m.role === "Todos os cargos" || m.role === employee.role
+  );
+}
+
+function getProgress(employee) {
+  if (!employee) return 0;
+  const modules = getEligibleModules(employee);
+  if (!modules.length) return 0;
+
+  const completed = modules.filter(m =>
+    (employee.completedModules || []).includes(m.id)
+  ).length;
+
+  return Math.round((completed / modules.length) * 100);
+}
+
+function escapeHTML(value = "") {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[char]);
+}
+
+function progressHTML(progress) {
+  return `
+    <div class="progress-track">
+      <div class="progress-fill" style="width:${progress}%"></div>
+    </div>
+  `;
+}
+
+function formatDate(date) {
+  if (!date) return "Não informado";
+  return new Date(date + "T12:00:00").toLocaleDateString("pt-BR");
+}
+
+function emptyMessage(message) {
+  return `<div class="empty">${escapeHTML(message)}</div>`;
+}
+
+// ======================================
+// 3. DASHBOARD
+// ======================================
+
+function renderDashboard() {
+  const employee = getEmployee();
+
+  const total = db.employees.length;
+  const completed = db.employees.filter(e => getProgress(e) === 100).length;
+  const inProgress = db.employees.filter(e => {
+    const p = getProgress(e);
+    return p > 0 && p < 100;
+  }).length;
+
+  const average = total
+    ? Math.round(db.employees.reduce((sum, e) => sum + getProgress(e), 0) / total)
+    : 0;
+
+  const nextModule = employee
+    ? getEligibleModules(employee).find(m =>
+        !(employee.completedModules || []).includes(m.id)
+      )
+    : null;
+
+  return `
+    <section class="welcome">
+      <div>
+        <div class="eyebrow" style="color:#67d8af">PLATAFORMA DE DESENVOLVIMENTO</div>
+        <h2>Desenvolver pessoas.<br>Fortalecer equipes.</h2>
+        <p>Organize a integração, acompanhe as capacitações e desenvolva competências em cada unidade.</p>
+      </div>
+      <div class="welcome-mark">✦</div>
+    </section>
+
+    <section class="stats">
+      <div class="card stat-card">
+        <div class="stat-label">Colaboradores cadastrados</div>
+        <div class="stat-number">${total}</div>
+        <div class="stat-description">Total na plataforma</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Treinamentos concluídos</div>
+        <div class="stat-number">${completed}</div>
+        <div class="stat-description">Colaboradores com trilha completa</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Em desenvolvimento</div>
+        <div class="stat-number">${inProgress}</div>
+        <div class="stat-description">Com treinamentos iniciados</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Progresso médio</div>
+        <div class="stat-number">${average}%</div>
+        <div class="stat-description">Conclusão das trilhas</div>
+      </div>
+    </section>
+
+    <div class="grid-2">
+      <section class="card">
+        <div class="section-title">
+          <div>
+            <h2>Progresso da equipe</h2>
+            <p>Acompanhamento por colaborador</p>
+          </div>
+        </div>
+
+        ${db.employees.length ? db.employees.map(e => {
+          const p = getProgress(e);
+          return `
+            <div class="employee-row">
+              <div class="employee-avatar">${escapeHTML(e.name.charAt(0).toUpperCase())}</div>
+              <div class="employee-info">
+                <strong>${escapeHTML(e.name)}</strong>
+                <small>${escapeHTML(e.role)} · ${escapeHTML(e.unit)}</small>
+                ${progressHTML(p)}
+              </div>
+              <div class="employee-progress">${p}%</div>
+            </div>
+          `;
+        }).join("") : emptyMessage("Cadastre colaboradores para visualizar os indicadores.")}
+      </section>
+
+      <section class="card">
+        <div class="section-title">
+          <div>
+            <h2>Minha trilha</h2>
+            <p>Treinamentos do colaborador selecionado</p>
+          </div>
+        </div>
+
+        ${employee ? `
+          <h3 style="font-size:15px;margin-bottom:8px">${escapeHTML(employee.name)}</h3>
+          <p style="font-size:12px;color:var(--muted)">${escapeHTML(employee.role)}</p>
+          <div style="margin:18px 0">
+            <strong style="font-size:25px">${getProgress(employee)}%</strong>
+            <span style="font-size:11px;color:var(--muted)"> de conclusão</span>
+            ${progressHTML(getProgress(employee))}
+          </div>
+          ${nextModule ? `
+            <p style="font-size:12px;margin-bottom:12px">Próximo treinamento: <strong>${escapeHTML(nextModule.title)}</strong></p>
+            <button class="btn" data-action="open-module" data-id="${nextModule.id}">Continuar aprendizagem</button>
+          ` : `
+            <span class="tag">Trilha concluída</span>
+          `}
+        ` : emptyMessage("Cadastre um colaborador para iniciar uma trilha.")}
+      </section>
+    </div>
+
+    <div class="section-title">
+      <div>
+        <h2>Acesso rápido</h2>
+        <p>Principais recursos da plataforma</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <button class="card" data-page="colaboradores" style="text-align:left;border:1px solid var(--border)">
+        <h3 style="font-size:14px;margin-bottom:8px">＋ Cadastrar colaborador</h3>
+        <p style="font-size:12px;color:var(--muted)">Registre novos integrantes da equipe.</p>
+      </button>
+      <button class="card" data-page="trilhas" style="text-align:left;border:1px solid var(--border)">
+        <h3 style="font-size:14px;margin-bottom:8px">▤ Ver treinamentos</h3>
+        <p style="font-size:12px;color:var(--muted)">Acesse os módulos por cargo.</p>
+      </button>
+    </div>
+  `;
+}
+
+// ======================================
+// 4. TRILHAS DE APRENDIZAGEM
+// ======================================
+
+function renderModules() {
+  const employee = getEmployee();
+
+  if (!employee) {
+    return `<div class="card">${emptyMessage("Cadastre ou selecione um colaborador para visualizar as trilhas.")}</div>`;
+  }
+
+  const modules = getEligibleModules(employee);
+
+  return `
+    <div class="card">
+      <div class="section-title">
+        <div>
+          <h2>Trilha de ${escapeHTML(employee.name)}</h2>
+          <p>Cargo: ${escapeHTML(employee.role)}</p>
+        </div>
+        <span class="tag">${getProgress(employee)}% concluído</span>
+      </div>
+      ${progressHTML(getProgress(employee))}
+    </div>
+
+    <div class="section-title">
+      <div>
+        <h2>Módulos disponíveis</h2>
+        <p>Conteúdos de capacitação definidos para o cargo</p>
+      </div>
+    </div>
+
+    <div class="module-grid">
+      ${modules.map(m => {
+        const done = (employee.completedModules || []).includes(m.id);
+        return `
+          <article class="module-card">
+            <div class="module-icon">${m.icon}</div>
+            <span class="tag ${done ? "" : "pending"}">${done ? "Concluído" : "Disponível"}</span>
+            <h3 style="margin-top:13px">${escapeHTML(m.title)}</h3>
+            <p>${escapeHTML(m.description)}</p>
+            <div class="module-meta">
+              <span>⏱ ${escapeHTML(m.duration)}</span>
+              <span>${escapeHTML(m.role)}</span>
+            </div>
+            <button class="btn ${done ? "btn-secondary" : ""}" data-action="open-module" data-id="${m.id}">
+              ${done ? "Revisar módulo" : "Iniciar treinamento"}
+            </button>
+          </article>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+// ======================================
+// 5. CADASTRO DE COLABORADORES
+// ======================================
+
+function renderEmployees() {
+  const roles = [
+    "Auxiliar de cozinha",
+    "Atendente",
+    "Caixa",
+    "Gerente de unidade"
+  ];
+
+  return `
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <h2>Novo colaborador</h2>
+          <p>Cadastre um integrante para iniciar o onboarding.</p>
+        </div>
+      </div>
+
+      <form id="addEmployeeForm">
+        <div class="form-grid">
+          <div class="field">
+            <label>Nome completo</label>
+            <input name="name" required placeholder="Nome do colaborador">
+          </div>
+          <div class="field">
+            <label>Cargo</label>
+            <select name="role" required>
+              <option value="">Selecione</option>
+              ${roles.map(r => `<option>${r}</option>`).join("")}
+            </select>
+          </div>
+          <div class="field">
+            <label>Unidade</label>
+            <input name="unit" required placeholder="Ex.: Manaus - Centro">
+          </div>
+          <div class="field">
+            <label>Data de admissão</label>
+            <input name="start" type="date" required>
+          </div>
+          <div class="field">
+            <label>Chefe ou padrinho responsável</label>
+            <input name="mentor" placeholder="Nome do responsável">
+          </div>
+        </div>
+        <button class="btn" type="submit">Cadastrar colaborador</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <h2>Equipe cadastrada</h2>
+          <p>${db.employees.length} colaborador(es) registrado(s)</p>
+        </div>
+      </div>
+
+      ${db.employees.length ? `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Cargo</th>
+                <th>Unidade</th>
+                <th>Progresso</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${db.employees.map(e => `
+                <tr>
+                  <td><strong>${escapeHTML(e.name)}</strong></td>
+                  <td>${escapeHTML(e.role)}</td>
+                  <td>${escapeHTML(e.unit)}</td>
+                  <td>${getProgress(e)}%</td>
+                  <td>
+                    <button class="btn btn-danger btn-small" data-action="delete-employee" data-id="${e.id}">
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      ` : emptyMessage("Nenhum colaborador cadastrado.")}
+    </section>
+  `;
+}
+
+// ======================================
+// 6. ACOMPANHAMENTO E FEEDBACK
+// ======================================
+
+function renderMentoring() {
+  const employee = getEmployee();
+
+  if (!employee) {
+    return `<div class="card">${emptyMessage("Selecione um colaborador para acompanhar.")}</div>`;
+  }
+
+  employee.notes = employee.notes || [];
+
+  return `
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <h2>Acompanhamento individual</h2>
+          <p>Registre a evolução do colaborador.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="stat-label">Colaborador</div>
+          <h3 style="font-size:18px;margin:8px 0">${escapeHTML(employee.name)}</h3>
+          <p style="font-size:12px;color:var(--muted)">${escapeHTML(employee.role)}</p>
+          <div style="margin-top:18px">
+            <div class="stat-label">Responsável</div>
+            <strong style="font-size:13px">${escapeHTML(employee.mentor || "Não definido")}</strong>
+          </div>
+          <div style="margin-top:18px">
+            <div class="stat-label">Data de admissão</div>
+            <strong style="font-size:13px">${formatDate(employee.start)}</strong>
+          </div>
+        </div>
+
+        <div>
+          <div class="stat-label">Progresso da capacitação</div>
+          <div class="stat-number">${getProgress(employee)}%</div>
+          ${progressHTML(getProgress(employee))}
+          <p style="font-size:11px;color:var(--muted)">Percentual de módulos concluídos.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <h2>Novo registro de acompanhamento</h2>
+          <p>Feedback, orientação ou observação do responsável.</p>
+        </div>
+      </div>
+
+      <form id="noteForm">
+        <div class="field">
+          <label>Observação</label>
+          <textarea name="note" required placeholder="Descreva o desenvolvimento, as dificuldades ou os avanços do colaborador..."></textarea>
+        </div>
+        <button class="btn" type="submit">Salvar acompanhamento</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <h2>Histórico de acompanhamento</h2>
+          <p>Registros realizados para este colaborador.</p>
+        </div>
+      </div>
+
+      ${employee.notes.length ? employee.notes.slice().reverse().map(n => `
+        <div class="note">
+          <strong>${escapeHTML(n.author || employee.mentor || "Responsável")}</strong>
+          <small>${escapeHTML(n.date)}</small>
+          <p>${escapeHTML(n.text)}</p>
+        </div>
+      `).join("") : emptyMessage("Nenhum registro de acompanhamento realizado.")}
+    </section>
+  `;
+}
+
+// ======================================
+// 7. RELATÓRIOS
+// ======================================
+
+function renderReports() {
+  const average = db.employees.length
+    ? Math.round(db.employees.reduce((sum, e) => sum + getProgress(e), 0) / db.employees.length)
+    : 0;
+
+  return `
+    <section class="stats">
+      <div class="card stat-card">
+        <div class="stat-label">Total de colaboradores</div>
+        <div class="stat-number">${db.employees.length}</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Média de conclusão</div>
+        <div class="stat-number">${average}%</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Módulos disponíveis</div>
+        <div class="stat-number">${MODULES.length}</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-label">Registros de feedback</div>
+        <div class="stat-number">${db.employees.reduce((sum, e) => sum + (e.notes || []).length, 0)}</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <h2>Relatório de capacitação</h2>
+          <p>Indicadores individuais de desenvolvimento.</p>
+        </div>
+        <button class="btn btn-secondary" data-action="export">Exportar backup</button>
+      </div>
+
+      ${db.employees.length ? `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Cargo</th>
+                <th>Unidade</th>
+                <th>Módulos concluídos</th>
+                <th>Progresso</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${db.employees.map(e => {
+                const modules = getEligibleModules(e);
+                const done = modules.filter(m => (e.completedModules || []).includes(m.id)).length;
+                const p = getProgress(e);
+                return `
+                  <tr>
+                    <td>${escapeHTML(e.name)}</td>
+                    <td>${escapeHTML(e.role)}</td>
+                    <td>${escapeHTML(e.unit)}</td>
+                    <td>${done}/${modules.length}</td>
+                    <td>${p}%</td>
+                    <td><span class="tag ${p === 100 ? "" : "pending"}">${p === 100 ? "Concluído" : p === 0 ? "Não iniciado" : "Em andamento"}</span></td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      ` : emptyMessage("Cadastre colaboradores para gerar relatórios.")}
+    </section>
+
+    <section class="card">
+      <h2 style="font-size:16px;margin-bottom:10px">Backup dos dados</h2>
+      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:15px">
+        Exporte uma cópia dos registros armazenados neste navegador. O arquivo pode ser guardado como backup.
+      </p>
+      <button class="btn" data-action="export">Baixar backup em JSON</button>
+    </section>
+  `;
+}
+
+// ======================================
+// 8. RENDERIZAÇÃO DAS TELAS
+// ======================================
+
+const pageTitles = {
+  dashboard: "Dashboard",
+  trilhas: "Trilhas de aprendizagem",
+  colaboradores: "Colaboradores",
+  acompanhamento: "Acompanhamento",
+  relatorios: "Relatórios"
+};
+
+function render() {
+  document.getElementById("pageTitle").textContent = pageTitles[activePage];
+
+  const picker = document.getElementById("employeePicker");
+
+  picker.innerHTML = db.employees.length
+    ? db.employees.map(e => `
+        <option value="${e.id}">${escapeHTML(e.name)}</option>
+      `).join("")
+    : `<option value="">Nenhum colaborador</option>`;
+
+  if (activeEmployeeId && db.employees.some(e => String(e.id) === String(activeEmployeeId))) {
+    picker.value = activeEmployeeId;
+  }
+
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.page === activePage);
+  });
+
+  const view = document.getElementById("view");
+
+  switch (activePage) {
+    case "dashboard":
+      view.innerHTML = renderDashboard();
+      break;
+    case "trilhas":
+      view.innerHTML = renderModules();
+      break;
+    case "colaboradores":
+      view.innerHTML = renderEmployees();
+      break;
+    case "acompanhamento":
+      view.innerHTML = renderMentoring();
+      break;
+    case "relatorios":
+      view.innerHTML = renderReports();
+      break;
+    default:
+      view.innerHTML = renderDashboard();
+  }
+}
+
+// ======================================
+// 9. MODAL DOS TREINAMENTOS E QUIZ
+// ======================================
+
+function openModule(id) {
+  const module = MODULES.find(m => m.id === Number(id));
+  const employee = getEmployee();
+
+  if (!module || !employee) {
+    alert("Selecione um colaborador antes de iniciar o treinamento.");
+    return;
+  }
+
+  const allowed = getEligibleModules(employee).some(m => m.id === module.id);
+
+  if (!allowed) {
+    alert("Este módulo não está disponível para o cargo selecionado.");
+    return;
+  }
+
+  const done = (employee.completedModules || []).includes(module.id);
+
+  document.getElementById("modalRoot").innerHTML = `
+    <div class="modal-backdrop" id="modalBackdrop">
+      <section class="modal">
+        <div class="modal-head">
+          <div>
+            <div class="eyebrow">MÓDULO DE CAPACITAÇÃO</div>
+            <h2 style="margin-top:7px">${escapeHTML(module.title)}</h2>
+            <p style="font-size:11px;color:var(--muted);margin-top:6px">${escapeHTML(module.duration)}</p>
+          </div>
+          <button class="close-btn" data-action="close-modal">×</button>
+        </div>
+
+        ${done ? `<span class="tag">Módulo já concluído</span>` : ""}
+
+        <p style="font-size:13px;line-height:1.7;margin-bottom:10px">
+          ${escapeHTML(module.description)}
+        </p>
+
+        <div class="lesson-content">
+          <strong>Conteúdo do treinamento</strong>
+          <ul>
+            ${module.topics.map(t => `<li>${escapeHTML(t)}</li>`).join("")}
+          </ul>
+        </div>
+
+        <div class="section-title">
+          <div>
+            <h2>Avaliação de aprendizagem</h2>
+            <p>Responda às questões para registrar a conclusão.</p>
+          </div>
+        </div>
+
+        <form id="quizForm" data-module="${module.id}">
+          ${module.quiz.map((q, index) => `
+            <div class="question">
+              <strong>${index + 1}. ${escapeHTML(q.question)}</strong>
+              ${q.options.map((option, optionIndex) => `
+                <label class="option">
+                  <input type="radio" name="q${index}" value="${optionIndex}" required>
+                  ${escapeHTML(option)}
+                </label>
+              `).join("")}
+            </div>
+          `).join("")}
+
+          <button type="submit" class="btn">Corrigir avaliação</button>
+        </form>
+
+        <div id="quizResult" class="quiz-result"></div>
+      </section>
+    </div>
+  `;
+}
+
+// ======================================
+// 10. NAVEGAÇÃO E AÇÕES
+// ======================================
+
+document.addEventListener("click", event => {
+
+  const nav = event.target.closest("[data-page]");
+
+  if (nav) {
+    activePage = nav.dataset.page;
+    render();
+    return;
+  }
+
+  const actionButton = event.target.closest("[data-action]");
+
+  if (!actionButton) return;
+
+  const action = actionButton.dataset.action;
+  const id = actionButton.dataset.id;
+
+  if (action === "open-module") {
+    openModule(id);
+  }
+
+  if (action === "close-modal") {
+    document.getElementById("modalRoot").innerHTML = "";
+  }
+
+  if (action === "delete-employee") {
+    if (!confirm("Deseja excluir este colaborador e seus registros?")) return;
+
+    db.employees = db.employees.filter(e => String(e.id) !== String(id));
+
+    if (String(activeEmployeeId) === String(id)) {
+      activeEmployeeId = db.employees[0]?.id ?? null;
+    }
+
+    saveData();
+    render();
+  }
+
+  if (action === "export") {
+    const content = JSON.stringify(db, null, 2);
+    const blob = new Blob([content], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "backup-trilha-vv.json";
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+});
+
+document.getElementById("employeePicker").addEventListener("change", event => {
+  activeEmployeeId = event.target.value || null;
+  render();
+});
+
+document.addEventListener("click", event => {
+  if (event.target.id === "modalBackdrop") {
+    document.getElementById("modalRoot").innerHTML = "";
+  }
+});
+
+// ======================================
+// 11. CADASTRO E ACOMPANHAMENTO
+// ======================================
+
+document.addEventListener("submit", event => {
+
+  // Cadastro de colaborador
+  if (event.target.id === "addEmployeeForm") {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+
+    const employee = {
+      id: Date.now(),
+      name: form.get("name").trim(),
+      role: form.get("role"),
+      unit: form.get("unit").trim(),
+      start: form.get("start"),
+      mentor: form.get("mentor").trim(),
+      completedModules: [],
+      notes: []
+    };
+
+    db.employees.push(employee);
+    activeEmployeeId = employee.id;
+
+    saveData();
+    activePage = "colaboradores";
+    render();
+
+    alert("Colaborador cadastrado com sucesso!");
+  }
+
+  // Registro de feedback
+  if (event.target.id === "noteForm") {
+    event.preventDefault();
+
+    const employee = getEmployee();
+    if (!employee) return;
+
+    const form = new FormData(event.target);
+    const text = form.get("note").trim();
+
+    if (!text) return;
+
+    employee.notes = employee.notes || [];
+
+    employee.notes.push({
+      text,
+      author: employee.mentor || "Responsável",
+      date: new Date().toLocaleString("pt-BR")
+    });
+
+    saveData();
+    render();
+
+    alert("Acompanhamento registrado!");
+  }
+
+  // Correção da avaliação
+  if (event.target.id === "quizForm") {
+    event.preventDefault();
+
+    const moduleId = Number(event.target.dataset.module);
+    const module = MODULES.find(m => m.id === moduleId);
+    const employee = getEmployee();
+
+    if (!module || !employee) return;
+
+    const form = new FormData(event.target);
+
+    let correct = 0;
+
+    for (let i = 0; i < module.quiz.length; i++) {
+      const answer = form.get("q" + i);
+
+      if (answer === null) {
+        document.getElementById("quizResult").textContent =
+          "Responda todas as questões antes de corrigir.";
+        return;
+      }
+
+      if (Number(answer) === module.quiz[i].answer) {
+        correct++;
+      }
+    }
+
+    const score = Math.round((correct / module.quiz.length) * 100);
+    const result = document.getElementById("quizResult");
+
+    if (score >= 70) {
+      employee.completedModules = employee.completedModules || [];
+
+      if (!employee.completedModules.includes(module.id)) {
+        employee.completedModules.push(module.id);
+      }
+
+      saveData();
+      render();
+
+      result.style.color = "#16835f";
+      result.textContent =
+        `Aprovado! Você acertou ${correct} de ${module.quiz.length} questões (${score}%). Treinamento registrado como concluído.`;
+    } else {
+      result.style.color = "#c47a20";
+      result.textContent =
+        `Você acertou ${correct} de ${module.quiz.length} questões (${score}%). É necessário atingir 70%. Revise o conteúdo e tente novamente.`;
+    }
+  }
+});
+
+// ======================================
+// 12. INICIALIZAÇÃO
+// ======================================
+
+if (!localStorage.getItem(STORAGE_KEY)) {
+  saveData();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
