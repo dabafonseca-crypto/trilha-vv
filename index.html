@@ -603,6 +603,45 @@ footer {
   text-align: center;
 }
 
+
+.unit-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.unit-summary-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  background: #fafcfd;
+  min-width: 0;
+}
+.unit-summary-code {
+  font-size: 10px;
+  color: var(--green);
+  font-weight: 800;
+  margin-bottom: 7px;
+}
+.unit-summary-item strong {
+  display: block;
+  font-size: 12px;
+}
+.unit-summary-metrics {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.unit-summary-metrics b {
+  color: var(--text);
+  font-size: 12px;
+  margin-right: 4px;
+}
+@media(max-width: 900px) {
+  .unit-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 @media(max-width: 900px) {
   .sidebar {
     width: 190px;
@@ -672,6 +711,122 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+
+.demo-login-root {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  overflow-y: auto;
+  place-items: center;
+  padding: 24px;
+  background: linear-gradient(135deg,#101c2b,#203c50);
+}
+
+body.demo-locked .app {
+  display: none !important;
+}
+
+body.demo-locked #demoLoginRoot {
+  display: grid;
+}
+
+.demo-login-card {
+  width: min(440px,100%);
+  background: white;
+  padding: 34px;
+  border-radius: 20px;
+  box-shadow: 0 20px 70px #0005;
+}
+
+.demo-login-brand {
+  width: 54px;
+  height: 54px;
+  border-radius: 15px;
+  background: var(--green);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 22px;
+}
+
+.demo-login-card h1 {
+  font-size: 29px;
+  color: var(--navy);
+  margin: 8px 0;
+}
+
+.demo-login-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 25px;
+}
+
+.demo-login-card label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 15px 0 7px;
+}
+
+.demo-login-card input,
+.demo-login-card select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: white;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.demo-login-button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  background: var(--green);
+  color: white;
+  border: 0;
+  border-radius: 9px;
+  font-weight: 800;
+}
+
+.demo-login-hint {
+  margin-top: 22px;
+  padding: 14px;
+  background: var(--green-light);
+  border-radius: 10px;
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--text);
+}
+
+.demo-login-error {
+  color: #b54747;
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+.demo-login-warning {
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 18px;
+}
+
+.demo-session-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+@media(max-width: 500px) {
+  .demo-login-card { padding: 24px; }
+  .demo-session-label { display: none; }
+}
+
 </style>
 </head>
 
@@ -717,6 +872,8 @@ footer {
         <select id="employeePicker" aria-label="Selecionar colaborador">
         </select>
         <div class="avatar">VV</div>
+<span id="demoSessionLabel" class="demo-session-label"></span>
+<button class="btn btn-secondary btn-small" data-action="demo-logout">Sair</button>
       </div>
     </header>
 
@@ -730,8 +887,18 @@ footer {
 </div>
 
 <div id="modalRoot"></div>
+<div id="demoLoginRoot" class="demo-login-root"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ======================================
+// TRILHA VV - SUPABASE INTEGRATION
+const SUPABASE_URL = "https://xccqttgbofdinjkqbmjv.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_IETyFM-fBesrf1Z3uvM4vQ_D5kUn4iR";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+let demoSession = null;
+document.body.classList.add('demo-locked');
 // ======================================
 // 1. DADOS DOS TREINAMENTOS
 // ======================================
@@ -953,54 +1120,231 @@ const MODULES = [
 // 2. DADOS INICIAIS DE DEMONSTRAÇÃO
 // ======================================
 
-const STORAGE_KEY = "trilha_vv_dados_v1";
 
-const initialData = {
-  employees: [
-    {
-      id: 1,
-      name: "Ana Souza",
-      role: "Auxiliar de cozinha",
-      unit: "Manaus - Centro",
-      start: "2026-11-10",
-      mentor: "Chef Marcos",
-      completedModules: [1],
-      notes: []
-    },
-    {
-      id: 2,
-      name: "Carlos Lima",
-      role: "Atendente",
-      unit: "Belém - Centro",
-      start: "2026-11-15",
-      mentor: "Mariana",
-      completedModules: [],
-      notes: []
-    }
-  ]
+// ======================================
+// DADOS REMOTOS - SUPABASE
+// ======================================
+
+const MODULE_CODES = {
+  1: "boas-vindas-cultura",
+  2: "seguranca-alimentar",
+  3: "preparo-cozinha",
+  4: "atendimento-cliente",
+  5: "operacao-caixa",
+  6: "lideranca-acompanhamento"
 };
 
-function loadData() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed.employees)) {
-        return parsed;
-      }
-    }
-  } catch (error) {
-    console.error("Erro ao carregar dados:", error);
-  }
-  return JSON.parse(JSON.stringify(initialData));
-}
-
-let db = loadData();
-let activeEmployeeId = db.employees[0]?.id ?? null;
+let db = { employees: [] };
+let units = [];
+let moduleDbIds = {};
+let activeEmployeeId = null;
 let activePage = "dashboard";
 
-function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+function throwIfError(result, context) {
+  if (result.error) {
+    console.error(context, result.error);
+    throw new Error(context + ": " + result.error.message);
+  }
+  return result.data;
+}
+
+async function loadData() {
+  const unitResult = await supabaseClient
+    .from("units")
+    .select("id, code, name, city, state, is_active")
+    .eq("is_active", true)
+    .order("name");
+
+  units = throwIfError(unitResult, "Nao foi possivel carregar as unidades") || [];
+  if (!units.length) {
+    throw new Error("Nenhuma unidade encontrada. Execute primeiro o arquivo trilha_vv_supabase_demo.sql no SQL Editor do Supabase.");
+  }
+
+  const moduleResult = await supabaseClient
+    .from("training_modules")
+    .select("id, code, title, target_role, description, duration_minutes, icon, topics, quiz, sort_order, is_active")
+    .eq("is_active", true)
+    .order("sort_order");
+
+  const moduleRows = throwIfError(moduleResult, "Nao foi possivel carregar os treinamentos") || [];
+  if (!moduleRows.length) {
+    throw new Error("Nenhum treinamento encontrado. Confira se os seis modulos foram inseridos no Supabase.");
+  }
+
+  moduleDbIds = {};
+  const localIdByCode = Object.fromEntries(
+    Object.entries(MODULE_CODES).map(([id, code]) => [code, Number(id)])
+  );
+
+  moduleRows.forEach(row => {
+    const localId = localIdByCode[row.code];
+    if (!localId) return;
+    moduleDbIds[localId] = row.id;
+    const localModule = MODULES.find(module => module.id === localId);
+    if (localModule) {
+      localModule.dbId = row.id;
+      localModule.title = row.title;
+      localModule.role = row.target_role;
+      localModule.description = row.description || "";
+      localModule.duration = `${row.duration_minutes || 15} minutos`;
+      localModule.icon = row.icon || "📘";
+      localModule.topics = Array.isArray(row.topics) ? row.topics : [];
+      localModule.quiz = Array.isArray(row.quiz) ? row.quiz : [];
+    }
+  });
+
+  const missingModules = Object.keys(MODULE_CODES).filter(id => !moduleDbIds[Number(id)]);
+  if (missingModules.length) {
+    throw new Error("Faltam modulos no banco. Execute novamente o SQL de configuracao demonstrativa.");
+  }
+
+  let employeeResult = await supabaseClient
+    .from("employees")
+    .select("id, full_name, role, unit_id, admission_date, mentor_name, status")
+    .eq("status", "active")
+    .order("created_at");
+
+  let employeeRows = throwIfError(employeeResult, "Nao foi possivel carregar os colaboradores") || [];
+
+  // Insere dois colaboradores ficticios uma unica vez, somente se o banco estiver vazio.
+  if (employeeRows.length === 0) {
+    const demoEmployees = [
+      {
+        full_name: "Ana Souza (DEMO)",
+        role: "Auxiliar de cozinha",
+        unit_id: units[0].id,
+        admission_date: "2026-11-10",
+        mentor_name: "Chef Marcos (DEMO)",
+        status: "active"
+      },
+      {
+        full_name: "Carlos Lima (DEMO)",
+        role: "Atendente",
+        unit_id: (units[1] || units[0]).id,
+        admission_date: "2026-11-15",
+        mentor_name: "Mariana (DEMO)",
+        status: "active"
+      }
+    ];
+    const seedResult = await supabaseClient.from("employees").insert(demoEmployees);
+    throwIfError(seedResult, "Nao foi possivel criar os colaboradores ficticios");
+
+    employeeResult = await supabaseClient
+      .from("employees")
+      .select("id, full_name, role, unit_id, admission_date, mentor_name, status")
+      .eq("status", "active")
+      .order("created_at");
+    employeeRows = throwIfError(employeeResult, "Nao foi possivel recarregar os colaboradores") || [];
+  }
+
+  const progressResult = await supabaseClient
+    .from("employee_progress")
+    .select("employee_id, module_id, status, score, attempts");
+  const progressRows = throwIfError(progressResult, "Nao foi possivel carregar o progresso") || [];
+
+  const notesResult = await supabaseClient
+    .from("mentoring_notes")
+    .select("id, employee_id, author_name, note_text, created_at")
+    .order("created_at");
+  const noteRows = throwIfError(notesResult, "Nao foi possivel carregar os acompanhamentos") || [];
+
+  const unitById = Object.fromEntries(units.map(unit => [unit.id, unit]));
+  const localIdByDbId = Object.fromEntries(
+    Object.entries(moduleDbIds).map(([localId, dbId]) => [dbId, Number(localId)])
+  );
+
+  db.employees = employeeRows.map(row => {
+    const employeeProgress = progressRows.filter(p => p.employee_id === row.id);
+    const employeeNotes = noteRows.filter(n => n.employee_id === row.id);
+    return {
+      id: row.id,
+      name: row.full_name,
+      role: row.role,
+      unit_id: row.unit_id,
+      unit: unitById[row.unit_id]?.name || "Unidade nao identificada",
+      start: row.admission_date || "",
+      mentor: row.mentor_name || "",
+      completedModules: employeeProgress
+        .filter(p => p.status === "completed")
+        .map(p => localIdByDbId[p.module_id])
+        .filter(Boolean),
+      notes: employeeNotes.map(note => ({
+        id: note.id,
+        author: note.author_name || "Responsavel",
+        text: note.note_text,
+        date: new Date(note.created_at).toLocaleString("pt-BR")
+      }))
+    };
+  });
+
+  if (!activeEmployeeId || !db.employees.some(e => e.id === activeEmployeeId)) {
+    activeEmployeeId = db.employees[0]?.id ?? null;
+  }
+  return db;
+}
+
+function showConnectionError(error) {
+  document.body.classList.remove('demo-locked');
+  console.error("TRILHA VV / Supabase:", error);
+  document.getElementById("view").innerHTML = `
+    <section class="card">
+      <h2 style="color:#b54747;margin-bottom:12px">Nao foi possivel conectar ao banco</h2>
+      <p style="font-size:13px;line-height:1.7">${escapeHTML(error.message || String(error))}</p>
+      <p style="font-size:12px;color:var(--muted);margin-top:12px">
+        Confira a Project URL, a Publishable key, as tabelas e as politicas de demonstracao no Supabase.
+      </p>
+      <button class="btn" style="margin-top:16px" onclick="initializeApp()">Tentar novamente</button>
+    </section>
+  `;
+}
+
+async function initializeApp() {
+  document.getElementById("view").innerHTML = `
+    <section class="card"><p style="font-size:13px">Conectando ao banco de demonstracao do TRILHA VV...</p></section>
+  `;
+  try {
+    await loadData();
+    lastSupabaseSync = new Date();
+    showDemoLogin();
+    console.log("TRILHA VV conectado ao Supabase. Modo demonstrativo, sem login real.");
+  } catch (error) {
+    showConnectionError(error);
+  }
+}
+
+let lastSupabaseSync = null;
+
+async function refreshFromSupabase() {
+  const button = document.querySelector('[data-action="refresh-dashboard"]');
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Atualizando...";
+  }
+
+  try {
+    await loadData();
+    lastSupabaseSync = new Date();
+    render();
+  } catch (error) {
+    console.error("Erro ao atualizar Supabase:", error);
+
+    const status = document.getElementById("unitSyncStatus");
+
+    if (status) {
+      status.textContent = "Falha ao atualizar: " + error.message;
+      status.style.color = "#b54747";
+    }
+
+    alert("Falha ao atualizar os dados. Confira a mensagem no painel.");
+  } finally {
+    const currentButton = document.querySelector('[data-action="refresh-dashboard"]');
+
+    if (currentButton) {
+      currentButton.disabled = false;
+      currentButton.textContent = "Atualizar dados";
+    }
+  }
 }
 
 function getEmployee(id = activeEmployeeId) {
@@ -1024,6 +1368,191 @@ function getProgress(employee) {
   ).length;
 
   return Math.round((completed / modules.length) * 100);
+}
+
+
+
+function getUnitMetrics(unit) {
+  const employees = getScopedEmployees().filter(
+    e => e.unit_id === unit.id
+  );
+
+  const completedTrails = employees.filter(
+    e => getProgress(e) === 100
+  ).length;
+
+  const completedModules = employees.reduce(
+    (sum, e) => sum + (e.completedModules || []).length, 0
+  );
+
+  const notes = employees.reduce(
+    (sum, e) => sum + (e.notes || []).length, 0
+  );
+
+  const average = employees.length
+    ? Math.round(employees.reduce(
+        (sum, e) => sum + getProgress(e), 0
+      ) / employees.length)
+    : 0;
+
+  return {
+    unit, employees, completedTrails,
+    completedModules, notes, average
+  };
+}
+
+
+
+
+
+
+// ======================================
+// LOGIN DEMONSTRATIVO - TRILHA VV
+// NAO E AUTENTICACAO REAL
+// ======================================
+
+function getScopedEmployees() {
+  if (!demoSession) return db.employees;
+
+  if (demoSession.role === "manager") {
+    return db.employees.filter(
+      e => String(e.unit_id) === String(demoSession.unitId)
+    );
+  }
+
+  if (demoSession.role === "employee") {
+    return db.employees.filter(
+      e => String(e.id) === String(demoSession.employeeId)
+    );
+  }
+
+  return db.employees;
+}
+
+function getScopedUnits() {
+  if (!demoSession) return units;
+
+  if (demoSession.role === "manager") {
+    return units.filter(
+      u => String(u.id) === String(demoSession.unitId)
+    );
+  }
+
+  if (demoSession.role === "employee") {
+    const employee = db.employees.find(
+      e => String(e.id) === String(demoSession.employeeId)
+    );
+    return employee
+      ? units.filter(u => String(u.id) === String(employee.unit_id))
+      : [];
+  }
+
+  return units;
+}
+
+function canDemoAccessPage(page) {
+  if (!demoSession) return false;
+
+  if (demoSession.role === "employee") {
+    return ["dashboard", "trilhas"].includes(page);
+  }
+
+  return true;
+}
+
+function showDemoLogin() {
+  document.body.classList.add("demo-locked");
+
+  const root = document.getElementById("demoLoginRoot");
+  if (!root) return;
+
+  const unitOptions = units.map(u =>
+    `<option value="${escapeHTML(String(u.id))}">
+      ${escapeHTML(u.name)}
+    </option>`
+  ).join("");
+
+  const employeeOptions = db.employees.map(e =>
+    `<option value="${escapeHTML(String(e.id))}">
+      ${escapeHTML(e.name)} — ${escapeHTML(e.unit)}
+    </option>`
+  ).join("");
+
+  root.innerHTML = `
+    <div class="demo-login-card">
+      <div class="demo-login-brand">VV</div>
+
+      <div class="eyebrow">GESTAO DE APRENDIZAGEM</div>
+      <h1>TRILHA VV</h1>
+      <p class="demo-login-subtitle">
+        Capacitar. Acompanhar. Desenvolver.
+      </p>
+
+      <form id="demoLoginForm">
+
+        <label>Perfil de acesso</label>
+        <select name="profile" id="demoProfile">
+          <option value="admin">Administrador</option>
+          <option value="manager">Gerente</option>
+          <option value="employee">Colaborador</option>
+        </select>
+
+        <label>Usuario demonstrativo</label>
+        <input name="username" autocomplete="username"
+          placeholder="Digite seu usuario">
+
+        <label>Senha demonstrativa</label>
+        <input name="password" type="password"
+          autocomplete="current-password"
+          placeholder="Digite sua senha">
+
+        <div id="demoUnitWrap">
+          <label>Unidade do gerente</label>
+          <select name="unitId" id="demoUnitSelect">
+            ${unitOptions}
+          </select>
+        </div>
+
+        <div id="demoEmployeeWrap" hidden>
+          <label>Selecione o colaborador</label>
+          <select name="employeeId" id="demoEmployeeSelect">
+            <option value="">Selecione</option>
+            ${employeeOptions}
+          </select>
+        </div>
+
+        <div id="demoLoginError" class="demo-login-error"></div>
+
+        <button type="submit" class="demo-login-button">
+          Entrar na plataforma
+        </button>
+      </form>
+
+      <div class="demo-login-hint">
+        <strong>Acesso livre para demonstracao</strong>
+        <p>Digite qualquer usuario e qualquer senha.</p>
+        <p>Ou deixe os campos vazios.</p>
+        <p>O perfil selecionado define a visualizacao.</p>
+      </div>
+
+      <p class="demo-login-warning">
+        Ambiente demonstrativo. Nao utiliza autenticacao real.
+      </p>
+    </div>
+  `;
+
+  const profile = root.querySelector("#demoProfile");
+
+  function updateScope() {
+    root.querySelector("#demoUnitWrap").hidden =
+      profile.value !== "manager";
+
+    root.querySelector("#demoEmployeeWrap").hidden =
+      profile.value !== "employee";
+  }
+
+  profile.addEventListener("change", updateScope);
+  updateScope();
 }
 
 function escapeHTML(value = "") {
@@ -1057,18 +1586,29 @@ function emptyMessage(message) {
 // 3. DASHBOARD
 // ======================================
 
+
 function renderDashboard() {
   const employee = getEmployee();
 
-  const total = db.employees.length;
-  const completed = db.employees.filter(e => getProgress(e) === 100).length;
-  const inProgress = db.employees.filter(e => {
-    const p = getProgress(e);
-    return p > 0 && p < 100;
+  const total = getScopedEmployees().length;
+
+  const completedTrails = getScopedEmployees().filter(
+    e => getProgress(e) === 100
+  ).length;
+
+  const completedModules = getScopedEmployees().reduce(
+    (sum, e) => sum + (e.completedModules || []).length, 0
+  );
+
+  const inProgress = getScopedEmployees().filter(e => {
+    const progress = getProgress(e);
+    return progress > 0 && progress < 100;
   }).length;
 
   const average = total
-    ? Math.round(db.employees.reduce((sum, e) => sum + getProgress(e), 0) / total)
+    ? Math.round(getScopedEmployees().reduce(
+        (sum, e) => sum + getProgress(e), 0
+      ) / total)
     : 0;
 
   const nextModule = employee
@@ -1077,40 +1617,142 @@ function renderDashboard() {
       )
     : null;
 
+  const unitMetrics = getScopedUnits().map(getUnitMetrics);
+
   return `
     <section class="welcome">
       <div>
-        <div class="eyebrow" style="color:#67d8af">PLATAFORMA DE DESENVOLVIMENTO</div>
+        <div class="eyebrow" style="color:#67d8af">
+          PLATAFORMA DE DESENVOLVIMENTO
+        </div>
         <h2>Desenvolver pessoas.<br>Fortalecer equipes.</h2>
-        <p>Organize a integração, acompanhe as capacitações e desenvolva competências em cada unidade.</p>
+        <p>
+          Organize a integração, acompanhe as capacitações
+          e desenvolva competências em cada unidade.
+        </p>
       </div>
       <div class="welcome-mark">✦</div>
     </section>
 
     <section class="stats">
+
       <div class="card stat-card">
         <div class="stat-label">Colaboradores cadastrados</div>
         <div class="stat-number">${total}</div>
         <div class="stat-description">Total na plataforma</div>
       </div>
+
       <div class="card stat-card">
-        <div class="stat-label">Treinamentos concluídos</div>
-        <div class="stat-number">${completed}</div>
-        <div class="stat-description">Colaboradores com trilha completa</div>
+        <div class="stat-label">Trilhas completas</div>
+        <div class="stat-number">${completedTrails}</div>
+        <div class="stat-description">Colaboradores que concluíram todos os módulos</div>
       </div>
+
+      <div class="card stat-card">
+        <div class="stat-label">Módulos concluídos</div>
+        <div class="stat-number">${completedModules}</div>
+        <div class="stat-description">Total de módulos finalizados</div>
+      </div>
+
       <div class="card stat-card">
         <div class="stat-label">Em desenvolvimento</div>
         <div class="stat-number">${inProgress}</div>
-        <div class="stat-description">Com treinamentos iniciados</div>
+        <div class="stat-description">Colaboradores com trilhas iniciadas</div>
       </div>
+
       <div class="card stat-card">
         <div class="stat-label">Progresso médio</div>
         <div class="stat-number">${average}%</div>
-        <div class="stat-description">Conclusão das trilhas</div>
+        <div class="stat-description">Conclusão média das trilhas</div>
+      </div>
+
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <h2>Visão consolidada das unidades</h2>
+          <p>${lastSupabaseSync
+            ? "Ultima atualizacao: " + lastSupabaseSync.toLocaleString("pt-BR")
+            : "Indicadores sincronizados com o banco central"}
+          </p>
+        </div>
+        <button class="btn btn-secondary btn-small"
+          data-action="refresh-dashboard">
+          Atualizar dados
+        </button>
+      </div>
+
+      <div class="unit-summary-grid">
+
+        ${unitMetrics.map(metric => {
+          const {
+            unit, employees, completedTrails,
+            completedModules, notes, average
+          } = metric;
+
+          return `
+            <div class="unit-summary-item">
+
+              <div class="unit-summary-code">
+                ${escapeHTML(unit.code)}
+              </div>
+
+              <strong>${escapeHTML(unit.name)}</strong>
+
+              <div class="unit-summary-metrics">
+
+                <span><b>${employees.length}</b> colaboradores</span>
+
+                <span><b>${completedTrails}</b> trilhas completas</span>
+
+                <span><b>${completedModules}</b> módulos concluídos</span>
+
+                <span>
+                  <b>${employees.length ? average + "%" : "—"}</b>
+                  progresso médio
+                </span>
+
+                <div class="progress-track"
+                  style="height:6px;margin:3px 0 5px">
+                  <div class="progress-fill"
+                    style="width:${average}%"></div>
+                </div>
+
+                <span><b>${notes}</b> acompanhamentos</span>
+
+              </div>
+            </div>
+          `;
+        }).join("")}
+
       </div>
     </section>
 
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <h2>Comparativo de desempenho</h2>
+          <p>Percentual médio de conclusão por unidade</p>
+        </div>
+      </div>
+
+      ${unitMetrics.map(metric => `
+        <div style="margin-bottom:17px">
+          <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px">
+            <strong>${escapeHTML(metric.unit.name)}</strong>
+            <strong>${metric.employees.length ? metric.average + "%" : "Sem colaboradores"}</strong>
+          </div>
+          <div class="progress-track" style="height:10px">
+            <div class="progress-fill"
+              style="width:${metric.average}%"></div>
+          </div>
+        </div>
+      `).join("")}
+    </section>
+
     <div class="grid-2">
+
       <section class="card">
         <div class="section-title">
           <div>
@@ -1119,17 +1761,19 @@ function renderDashboard() {
           </div>
         </div>
 
-        ${db.employees.length ? db.employees.map(e => {
-          const p = getProgress(e);
+        ${getScopedEmployees().length ? getScopedEmployees().map(e => {
+          const progress = getProgress(e);
           return `
             <div class="employee-row">
-              <div class="employee-avatar">${escapeHTML(e.name.charAt(0).toUpperCase())}</div>
+              <div class="employee-avatar">
+                ${escapeHTML(e.name.charAt(0).toUpperCase())}
+              </div>
               <div class="employee-info">
                 <strong>${escapeHTML(e.name)}</strong>
                 <small>${escapeHTML(e.role)} · ${escapeHTML(e.unit)}</small>
-                ${progressHTML(p)}
+                ${progressHTML(progress)}
               </div>
-              <div class="employee-progress">${p}%</div>
+              <div class="employee-progress">${progress}%</div>
             </div>
           `;
         }).join("") : emptyMessage("Cadastre colaboradores para visualizar os indicadores.")}
@@ -1144,21 +1788,37 @@ function renderDashboard() {
         </div>
 
         ${employee ? `
-          <h3 style="font-size:15px;margin-bottom:8px">${escapeHTML(employee.name)}</h3>
-          <p style="font-size:12px;color:var(--muted)">${escapeHTML(employee.role)}</p>
+          <h3 style="font-size:15px;margin-bottom:8px">
+            ${escapeHTML(employee.name)}
+          </h3>
+
+          <p style="font-size:12px;color:var(--muted)">
+            ${escapeHTML(employee.role)}
+          </p>
+
           <div style="margin:18px 0">
             <strong style="font-size:25px">${getProgress(employee)}%</strong>
-            <span style="font-size:11px;color:var(--muted)"> de conclusão</span>
+            <span style="font-size:11px;color:var(--muted)">
+              de conclusão
+            </span>
             ${progressHTML(getProgress(employee))}
           </div>
+
           ${nextModule ? `
-            <p style="font-size:12px;margin-bottom:12px">Próximo treinamento: <strong>${escapeHTML(nextModule.title)}</strong></p>
-            <button class="btn" data-action="open-module" data-id="${nextModule.id}">Continuar aprendizagem</button>
+            <p style="font-size:12px;margin-bottom:12px">
+              Próximo treinamento:
+              <strong>${escapeHTML(nextModule.title)}</strong>
+            </p>
+            <button class="btn" data-action="open-module"
+              data-id="${nextModule.id}">
+              Continuar aprendizagem
+            </button>
           ` : `
             <span class="tag">Trilha concluída</span>
           `}
         ` : emptyMessage("Cadastre um colaborador para iniciar uma trilha.")}
       </section>
+
     </div>
 
     <div class="section-title">
@@ -1169,21 +1829,29 @@ function renderDashboard() {
     </div>
 
     <div class="grid-2">
-      <button class="card" data-page="colaboradores" style="text-align:left;border:1px solid var(--border)">
-        <h3 style="font-size:14px;margin-bottom:8px">＋ Cadastrar colaborador</h3>
-        <p style="font-size:12px;color:var(--muted)">Registre novos integrantes da equipe.</p>
+      <button class="card" data-page="colaboradores"
+        style="text-align:left;border:1px solid var(--border)">
+        <h3 style="font-size:14px;margin-bottom:8px">
+          ＋ Cadastrar colaborador
+        </h3>
+        <p style="font-size:12px;color:var(--muted)">
+          Registre novos integrantes da equipe.
+        </p>
       </button>
-      <button class="card" data-page="trilhas" style="text-align:left;border:1px solid var(--border)">
-        <h3 style="font-size:14px;margin-bottom:8px">▤ Ver treinamentos</h3>
-        <p style="font-size:12px;color:var(--muted)">Acesse os módulos por cargo.</p>
+
+      <button class="card" data-page="trilhas"
+        style="text-align:left;border:1px solid var(--border)">
+        <h3 style="font-size:14px;margin-bottom:8px">
+          ▤ Ver treinamentos
+        </h3>
+        <p style="font-size:12px;color:var(--muted)">
+          Acesse os módulos por cargo.
+        </p>
       </button>
     </div>
   `;
 }
 
-// ======================================
-// 4. TRILHAS DE APRENDIZAGEM
-// ======================================
 
 function renderModules() {
   const employee = getEmployee();
@@ -1272,7 +1940,10 @@ function renderEmployees() {
           </div>
           <div class="field">
             <label>Unidade</label>
-            <input name="unit" required placeholder="Ex.: Manaus - Centro">
+            <select name="unit_id" required>
+              <option value="">Selecione a unidade</option>
+              ${getScopedUnits().map(unit => `<option value="${unit.id}">${escapeHTML(unit.name)}</option>`).join("")}
+            </select>
           </div>
           <div class="field">
             <label>Data de admissão</label>
@@ -1291,11 +1962,11 @@ function renderEmployees() {
       <div class="section-title">
         <div>
           <h2>Equipe cadastrada</h2>
-          <p>${db.employees.length} colaborador(es) registrado(s)</p>
+          <p>${getScopedEmployees().length} colaborador(es) registrado(s)</p>
         </div>
       </div>
 
-      ${db.employees.length ? `
+      ${getScopedEmployees().length ? `
         <div class="table-wrap">
           <table>
             <thead>
@@ -1308,7 +1979,7 @@ function renderEmployees() {
               </tr>
             </thead>
             <tbody>
-              ${db.employees.map(e => `
+              ${getScopedEmployees().map(e => `
                 <tr>
                   <td><strong>${escapeHTML(e.name)}</strong></td>
                   <td>${escapeHTML(e.role)}</td>
@@ -1415,41 +2086,113 @@ function renderMentoring() {
 // 7. RELATÓRIOS
 // ======================================
 
+
 function renderReports() {
-  const average = db.employees.length
-    ? Math.round(db.employees.reduce((sum, e) => sum + getProgress(e), 0) / db.employees.length)
+  const total = getScopedEmployees().length;
+
+  const completedTrails = getScopedEmployees().filter(
+    e => getProgress(e) === 100
+  ).length;
+
+  const completedModules = getScopedEmployees().reduce(
+    (sum, e) => sum + (e.completedModules || []).length, 0
+  );
+
+  const average = total
+    ? Math.round(getScopedEmployees().reduce(
+        (sum, e) => sum + getProgress(e), 0
+      ) / total)
     : 0;
+
+  const feedbackTotal = getScopedEmployees().reduce(
+    (sum, e) => sum + (e.notes || []).length, 0
+  );
+
+  const unitMetrics = getScopedUnits().map(getUnitMetrics);
 
   return `
     <section class="stats">
+
       <div class="card stat-card">
-        <div class="stat-label">Total de colaboradores</div>
-        <div class="stat-number">${db.employees.length}</div>
+        <div class="stat-label">Colaboradores</div>
+        <div class="stat-number">${total}</div>
+        <div class="stat-description">Total cadastrado</div>
       </div>
+
       <div class="card stat-card">
-        <div class="stat-label">Média de conclusão</div>
+        <div class="stat-label">Trilhas completas</div>
+        <div class="stat-number">${completedTrails}</div>
+        <div class="stat-description">Colaboradores com 100% de conclusão</div>
+      </div>
+
+      <div class="card stat-card">
+        <div class="stat-label">Módulos concluídos</div>
+        <div class="stat-number">${completedModules}</div>
+        <div class="stat-description">Total de módulos finalizados</div>
+      </div>
+
+      <div class="card stat-card">
+        <div class="stat-label">Progresso médio</div>
         <div class="stat-number">${average}%</div>
+        <div class="stat-description">Média geral das trilhas</div>
       </div>
-      <div class="card stat-card">
-        <div class="stat-label">Módulos disponíveis</div>
-        <div class="stat-number">${MODULES.length}</div>
+
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <h2>Comparativo das oito unidades</h2>
+          <p>Indicadores consolidados de desenvolvimento</p>
+        </div>
+        <button class="btn btn-secondary"
+          data-action="refresh-dashboard">
+          Atualizar dados
+        </button>
       </div>
-      <div class="card stat-card">
-        <div class="stat-label">Registros de feedback</div>
-        <div class="stat-number">${db.employees.reduce((sum, e) => sum + (e.notes || []).length, 0)}</div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Unidade</th>
+              <th>Colaboradores</th>
+              <th>Trilhas completas</th>
+              <th>Módulos concluídos</th>
+              <th>Progresso médio</th>
+              <th>Acompanhamentos</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${unitMetrics.map(metric => `
+              <tr>
+                <td><strong>${escapeHTML(metric.unit.name)}</strong></td>
+                <td>${metric.employees.length}</td>
+                <td>${metric.completedTrails}</td>
+                <td>${metric.completedModules}</td>
+                <td>${metric.employees.length ? metric.average + "%" : "—"}</td>
+                <td>${metric.notes}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
       </div>
     </section>
 
     <section class="card">
       <div class="section-title">
         <div>
-          <h2>Relatório de capacitação</h2>
-          <p>Indicadores individuais de desenvolvimento.</p>
+          <h2>Relatório individual de capacitação</h2>
+          <p>${feedbackTotal} registro(s) de acompanhamento</p>
         </div>
-        <button class="btn btn-secondary" data-action="export">Exportar backup</button>
+        <button class="btn btn-secondary"
+          data-action="export">
+          Exportar backup
+        </button>
       </div>
 
-      ${db.employees.length ? `
+      ${getScopedEmployees().length ? `
         <div class="table-wrap">
           <table>
             <thead>
@@ -1462,19 +2205,27 @@ function renderReports() {
                 <th>Status</th>
               </tr>
             </thead>
+
             <tbody>
-              ${db.employees.map(e => {
+              ${getScopedEmployees().map(e => {
                 const modules = getEligibleModules(e);
-                const done = modules.filter(m => (e.completedModules || []).includes(m.id)).length;
-                const p = getProgress(e);
+                const done = modules.filter(
+                  m => (e.completedModules || []).includes(m.id)
+                ).length;
+                const progress = getProgress(e);
+
                 return `
                   <tr>
                     <td>${escapeHTML(e.name)}</td>
                     <td>${escapeHTML(e.role)}</td>
                     <td>${escapeHTML(e.unit)}</td>
                     <td>${done}/${modules.length}</td>
-                    <td>${p}%</td>
-                    <td><span class="tag ${p === 100 ? "" : "pending"}">${p === 100 ? "Concluído" : p === 0 ? "Não iniciado" : "Em andamento"}</span></td>
+                    <td>${progress}%</td>
+                    <td>
+                      <span class="tag ${progress === 100 ? "" : "pending"}">
+                        ${progress === 100 ? "Concluído" : progress === 0 ? "Não iniciado" : "Em andamento"}
+                      </span>
+                    </td>
                   </tr>
                 `;
               }).join("")}
@@ -1482,17 +2233,23 @@ function renderReports() {
           </table>
         </div>
       ` : emptyMessage("Cadastre colaboradores para gerar relatórios.")}
+
     </section>
 
     <section class="card">
-      <h2 style="font-size:16px;margin-bottom:10px">Backup dos dados</h2>
+      <h2 style="font-size:16px;margin-bottom:10px">
+        Backup dos dados
+      </h2>
       <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:15px">
-        Exporte uma cópia dos registros armazenados neste navegador. O arquivo pode ser guardado como backup.
+        Exporte uma cópia dos registros armazenados no sistema.
       </p>
-      <button class="btn" data-action="export">Baixar backup em JSON</button>
+      <button class="btn" data-action="export">
+        Baixar backup em JSON
+      </button>
     </section>
   `;
 }
+
 
 // ======================================
 // 8. RENDERIZAÇÃO DAS TELAS
@@ -1507,21 +2264,29 @@ const pageTitles = {
 };
 
 function render() {
+  if (!demoSession) { showDemoLogin(); return; }
+  if (!canDemoAccessPage(activePage)) activePage = 'dashboard';
   document.getElementById("pageTitle").textContent = pageTitles[activePage];
 
   const picker = document.getElementById("employeePicker");
 
-  picker.innerHTML = db.employees.length
-    ? db.employees.map(e => `
+  picker.innerHTML = getScopedEmployees().length
+    ? getScopedEmployees().map(e => `
         <option value="${e.id}">${escapeHTML(e.name)}</option>
       `).join("")
     : `<option value="">Nenhum colaborador</option>`;
 
-  if (activeEmployeeId && db.employees.some(e => String(e.id) === String(activeEmployeeId))) {
-    picker.value = activeEmployeeId;
+  const scopedEmployees = getScopedEmployees();
+
+  if (!scopedEmployees.some(e => String(e.id) === String(activeEmployeeId))) {
+    activeEmployeeId = scopedEmployees[0]?.id ?? null;
   }
 
+  if (activeEmployeeId) picker.value = activeEmployeeId;
+  picker.hidden = demoSession.role === "employee";
+
   document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.hidden = !canDemoAccessPage(btn.dataset.page);
     btn.classList.toggle("active", btn.dataset.page === activePage);
   });
 
@@ -1546,8 +2311,17 @@ function render() {
     default:
       view.innerHTML = renderDashboard();
   }
-}
 
+  view.querySelectorAll("[data-page]").forEach(el => {
+    el.hidden = !canDemoAccessPage(el.dataset.page);
+  });
+
+  const sessionLabel = document.getElementById("demoSessionLabel");
+  if (sessionLabel) {
+    sessionLabel.textContent =
+      demoSession.roleLabel + " · " + demoSession.displayName;
+  }
+}
 // ======================================
 // 9. MODAL DOS TREINAMENTOS E QUIZ
 // ======================================
@@ -1628,11 +2402,12 @@ function openModule(id) {
 // 10. NAVEGAÇÃO E AÇÕES
 // ======================================
 
-document.addEventListener("click", event => {
+document.addEventListener("click", async event => {
 
   const nav = event.target.closest("[data-page]");
 
   if (nav) {
+    if (!canDemoAccessPage(nav.dataset.page)) return;
     activePage = nav.dataset.page;
     render();
     return;
@@ -1645,6 +2420,20 @@ document.addEventListener("click", event => {
   const action = actionButton.dataset.action;
   const id = actionButton.dataset.id;
 
+  if (action === "demo-logout") {
+    demoSession = null;
+    activeEmployeeId = null;
+    activePage = "dashboard";
+    document.getElementById("modalRoot").innerHTML = "";
+    showDemoLogin();
+    return;
+  }
+
+  if (action === "refresh-dashboard") {
+    await refreshFromSupabase();
+    return;
+  }
+
   if (action === "open-module") {
     openModule(id);
   }
@@ -1656,14 +2445,13 @@ document.addEventListener("click", event => {
   if (action === "delete-employee") {
     if (!confirm("Deseja excluir este colaborador e seus registros?")) return;
 
-    db.employees = db.employees.filter(e => String(e.id) !== String(id));
-
-    if (String(activeEmployeeId) === String(id)) {
-      activeEmployeeId = db.employees[0]?.id ?? null;
+    const deleteResult = await supabaseClient.from("employees").delete().eq("id", id);
+    if (deleteResult.error) {
+      alert("Nao foi possivel excluir: " + deleteResult.error.message);
+      return;
     }
-
-    saveData();
-    render();
+    if (String(activeEmployeeId) === String(id)) activeEmployeeId = null;
+    await refreshFromSupabase();
   }
 
   if (action === "export") {
@@ -1681,7 +2469,15 @@ document.addEventListener("click", event => {
 });
 
 document.getElementById("employeePicker").addEventListener("change", event => {
-  activeEmployeeId = event.target.value || null;
+  if (!demoSession || demoSession.role === "employee") return;
+
+  const selected = getScopedEmployees().find(
+    e => String(e.id) === String(event.target.value)
+  );
+
+  if (!selected) return;
+
+  activeEmployeeId = selected.id;
   render();
 });
 
@@ -1695,7 +2491,76 @@ document.addEventListener("click", event => {
 // 11. CADASTRO E ACOMPANHAMENTO
 // ======================================
 
-document.addEventListener("submit", event => {
+document.addEventListener("submit", async event => {
+
+  if (event.target.id === "demoLoginForm") {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+    const role = String(form.get("profile") || "");
+    const username = String(form.get("username") || "").trim().toLowerCase();
+    const password = String(form.get("password") || "");
+
+    const labels = {
+      admin: "Administrador",
+      manager: "Gerente",
+      employee: "Colaborador"
+    };
+
+    const error = document.getElementById("demoLoginError");
+
+    const unitId = form.get("unitId");
+    const employeeId = form.get("employeeId");
+
+    if (role === "manager" && !unitId) {
+      error.textContent = "Selecione uma unidade.";
+      return;
+    }
+
+    if (role === "employee" && !employeeId) {
+      error.textContent = "Selecione um colaborador.";
+      return;
+    }
+
+    const selectedEmployee = role === "employee"
+      ? db.employees.find(e => String(e.id) === String(employeeId))
+      : null;
+
+    if (role === "employee" && !selectedEmployee) {
+      error.textContent = "Colaborador nao encontrado.";
+      return;
+    }
+
+    const selectedUnit = units.find(
+      u => String(u.id) === String(unitId)
+    );
+
+    demoSession = {
+      role,
+      roleLabel: labels[role],
+      unitId: role === "manager" ? unitId : null,
+      employeeId: role === "employee" ? employeeId : null,
+      displayName: role === "admin"
+        ? "Todas as unidades"
+        : role === "manager"
+          ? (selectedUnit?.name || "Unidade")
+          : selectedEmployee.name
+    };
+
+    if (role === "employee") {
+      activeEmployeeId = selectedEmployee.id;
+    } else if (role === "manager") {
+      activeEmployeeId = getScopedEmployees()[0]?.id ?? null;
+    } else {
+      activeEmployeeId = db.employees[0]?.id ?? null;
+    }
+
+    activePage = "dashboard";
+    document.body.classList.remove("demo-locked");
+    document.getElementById("demoLoginRoot").innerHTML = "";
+    render();
+    return;
+  }
 
   // Cadastro de colaborador
   if (event.target.id === "addEmployeeForm") {
@@ -1703,25 +2568,28 @@ document.addEventListener("submit", event => {
 
     const form = new FormData(event.target);
 
-    const employee = {
-      id: Date.now(),
-      name: form.get("name").trim(),
+    const employeePayload = {
+      full_name: String(form.get("name") || "").trim(),
       role: form.get("role"),
-      unit: form.get("unit").trim(),
-      start: form.get("start"),
-      mentor: form.get("mentor").trim(),
-      completedModules: [],
-      notes: []
+      unit_id: form.get("unit_id"),
+      admission_date: form.get("start") || null,
+      mentor_name: String(form.get("mentor") || "").trim() || null,
+      status: "active"
     };
-
-    db.employees.push(employee);
-    activeEmployeeId = employee.id;
-
-    saveData();
+    const insertResult = await supabaseClient
+      .from("employees")
+      .insert(employeePayload)
+      .select("id")
+      .single();
+    if (insertResult.error) {
+      alert("Nao foi possivel cadastrar: " + insertResult.error.message);
+      return;
+    }
+    activeEmployeeId = insertResult.data.id;
+    await loadData();
     activePage = "colaboradores";
     render();
-
-    alert("Colaborador cadastrado com sucesso!");
+    alert("Colaborador cadastrado no Supabase!");
   }
 
   // Registro de feedback
@@ -1738,16 +2606,19 @@ document.addEventListener("submit", event => {
 
     employee.notes = employee.notes || [];
 
-    employee.notes.push({
-      text,
-      author: employee.mentor || "Responsável",
-      date: new Date().toLocaleString("pt-BR")
-    });
-
-    saveData();
-    render();
-
-    alert("Acompanhamento registrado!");
+    const noteResult = await supabaseClient
+      .from("mentoring_notes")
+      .insert({
+        employee_id: employee.id,
+        author_name: employee.mentor || "Responsavel (DEMO)",
+        note_text: text
+      });
+    if (noteResult.error) {
+      alert("Nao foi possivel salvar o acompanhamento: " + noteResult.error.message);
+      return;
+    }
+    await refreshFromSupabase();
+    alert("Acompanhamento registrado no Supabase!");
   }
 
   // Correção da avaliação
@@ -1782,22 +2653,121 @@ document.addEventListener("submit", event => {
     const result = document.getElementById("quizResult");
 
     if (score >= 70) {
-      employee.completedModules = employee.completedModules || [];
+      const databaseModuleId = moduleDbIds[module.id];
+      if (!databaseModuleId) {
+        result.style.color = "#c47a20";
+        result.textContent = "Este treinamento ainda nao esta vinculado ao banco.";
+        return;
+      }
+      const previousResult = await supabaseClient
+        .from("employee_progress")
+        .select("attempts, started_at")
+        .eq("employee_id", employee.id)
+        .eq("module_id", databaseModuleId)
+        .maybeSingle();
+      if (previousResult.error) {
+        result.style.color = "#c47a20";
+        result.textContent = "Erro ao consultar tentativas: " + previousResult.error.message;
+        return;
+      }
+      const previous = previousResult.data;
+      const now = new Date().toISOString();
+      const answers = {};
+      for (let i = 0; i < module.quiz.length; i++) answers["q" + i] = Number(form.get("q" + i));
 
-      if (!employee.completedModules.includes(module.id)) {
-        employee.completedModules.push(module.id);
+      const attemptInsert = await supabaseClient.from("quiz_attempts").insert({
+        employee_id: employee.id,
+        module_id: databaseModuleId,
+        correct_answers: correct,
+        total_questions: module.quiz.length,
+        score,
+        passed: true,
+        answers
+      });
+      if (attemptInsert.error) {
+        result.style.color = "#c47a20";
+        result.textContent = "Erro ao salvar avaliacao: " + attemptInsert.error.message;
+        return;
       }
 
-      saveData();
-      render();
+      const progressSave = await supabaseClient.from("employee_progress").upsert({
+        employee_id: employee.id,
+        module_id: databaseModuleId,
+        status: "completed",
+        score,
+        attempts: (previous?.attempts || 0) + 1,
+        started_at: previous?.started_at || now,
+        completed_at: now,
+        updated_at: now
+      }, { onConflict: "employee_id,module_id" });
+      if (progressSave.error) {
+        result.style.color = "#c47a20";
+        result.textContent = "A avaliacao foi salva, mas houve erro no progresso: " + progressSave.error.message;
+        return;
+      }
 
+      await loadData();
+      render();
       result.style.color = "#16835f";
-      result.textContent =
-        `Aprovado! Você acertou ${correct} de ${module.quiz.length} questões (${score}%). Treinamento registrado como concluído.`;
+      result.textContent = `Aprovado! Voce acertou ${correct} de ${module.quiz.length} questoes (${score}%). Conclusao registrada no banco.`;
     } else {
+      const databaseModuleId = moduleDbIds[module.id];
+      if (!databaseModuleId) {
+        result.style.color = "#c47a20";
+        result.textContent = "Este treinamento ainda nao esta vinculado ao banco.";
+        return;
+      }
+      const previousResult = await supabaseClient
+        .from("employee_progress")
+        .select("attempts, started_at")
+        .eq("employee_id", employee.id)
+        .eq("module_id", databaseModuleId)
+        .maybeSingle();
+      if (previousResult.error) {
+        result.style.color = "#c47a20";
+        result.textContent = "Erro ao consultar tentativas: " + previousResult.error.message;
+        return;
+      }
+      const previous = previousResult.data;
+      const now = new Date().toISOString();
+      const answers = {};
+      for (let i = 0; i < module.quiz.length; i++) answers["q" + i] = Number(form.get("q" + i));
+
+      const attemptInsert = await supabaseClient.from("quiz_attempts").insert({
+        employee_id: employee.id,
+        module_id: databaseModuleId,
+        correct_answers: correct,
+        total_questions: module.quiz.length,
+        score,
+        passed: false,
+        answers
+      });
+      if (attemptInsert.error) {
+        result.style.color = "#c47a20";
+        result.textContent = "Erro ao salvar avaliacao: " + attemptInsert.error.message;
+        return;
+      }
+
+      const progressSave = await supabaseClient.from("employee_progress").upsert({
+        employee_id: employee.id,
+        module_id: databaseModuleId,
+        status: "in_progress",
+        score,
+        attempts: (previous?.attempts || 0) + 1,
+        started_at: previous?.started_at || now,
+        completed_at: null,
+        updated_at: now
+      }, { onConflict: "employee_id,module_id" });
+      if (progressSave.error) {
+        result.style.color = "#c47a20";
+        result.textContent = "A avaliacao foi salva, mas houve erro no progresso: " + progressSave.error.message;
+        return;
+      }
+
+      await loadData();
+      render();
       result.style.color = "#c47a20";
-      result.textContent =
-        `Você acertou ${correct} de ${module.quiz.length} questões (${score}%). É necessário atingir 70%. Revise o conteúdo e tente novamente.`;
+      result.textContent = `Voce acertou ${correct} de ${module.quiz.length} questoes (${score}%). E necessario atingir 70%. Resultado registrado; revise o conteudo e tente novamente.`;
     }
   }
 });
@@ -1806,11 +2776,7 @@ document.addEventListener("submit", event => {
 // 12. INICIALIZAÇÃO
 // ======================================
 
-if (!localStorage.getItem(STORAGE_KEY)) {
-  saveData();
-}
-
-render();
+initializeApp();
 
 </script>
 
